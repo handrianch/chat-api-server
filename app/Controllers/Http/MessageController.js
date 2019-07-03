@@ -5,14 +5,14 @@ const Message = use('App/Models/Message')
 class MessageController {
 
   async index ({ request, response, view }) {
-    return Message.query().with('rooms.chats').fetch()
+    return await Message.query().fetch()
   }
 
   async store ({ request, response }) {
   }
 
   async show ({ params, request, response, view }) {
-    // return Message.find(params)
+    return await Message.query().where('room_id', params.id).fetch()
   }
 
 
