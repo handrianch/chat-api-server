@@ -53,6 +53,18 @@ class User extends Model {
   tokens () {
     return this.hasMany('App/Models/Token')
   }
+
+  sender () {
+    return this.hasMany('App/Models/Room', 'sender_id', 'id')
+  }
+
+  receiver () {
+    return this.hasMany('App/Models/Room', 'sender_id', 'id')
+  }
+
+  user () {
+    return this.hasMany('App/Models/Message')
+  }
 }
 
 module.exports = User

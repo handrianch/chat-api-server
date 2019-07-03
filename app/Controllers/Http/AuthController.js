@@ -2,7 +2,7 @@
 
 class AuthController {
   async auth ({request, auth, response}) {
-    const { username, password } = request.all()
+    const { username, password } = request.only(['username', 'password'])
     return auth.withRefreshToken().attempt(username, password)
   }
 }

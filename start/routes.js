@@ -16,5 +16,10 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.resource('/users', 'UserController').apiOnly()
 Route.post('/auth', 'AuthController.auth')
+
+Route.group(() => {
+  Route.get('/profile', 'UserController.profile')
+  Route.resource('/rooms', 'RoomController').apiOnly()
+  Route.resource('/messages', 'MessageController').apiOnly()
+}).prefix('api/v1').middleware('auth')
