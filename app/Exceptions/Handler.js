@@ -35,6 +35,9 @@ class ExceptionHandler extends BaseExceptionHandler {
     } else if(error.name == 'UserNotFoundException') {
       message = 'Username not found'
       status = 400
+    } else if(error.name == 'InvalidJwtToken') {
+      message = 'authorization failed'
+      status = 403
     }
 
     return response.status(status).send({message})
