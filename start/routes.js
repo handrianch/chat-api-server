@@ -21,5 +21,5 @@ Route.post('/auth', 'AuthController.auth')
 Route.group(() => {
   Route.get('/profile', 'UserController.profile')
   Route.resource('/rooms', 'RoomController').apiOnly()
-  Route.resource('/messages', 'MessageController').apiOnly()
+  Route.post('/messages', 'MessageController.store')
 }).prefix('api/v1').middleware('auth')

@@ -7,12 +7,17 @@ class RoomController {
 
   async index ({ request, response, auth }) {
     const user = await auth.getUser()
-    const rooms = Room.query()
+    const rooms = await Room.query()
                       .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
                       .with('sender')
                       .with('receiver')
+                      .with('chats', (builder) => {
+                        return builder.orderBy('created_at', 'DESC').limit(1)
+                      })
+                      .limit(1)
                       .fetch()
-    return rooms;
+
+    return response.status(200).send(rooms);
   }
 
   async store ({ request, response }) {
@@ -23,7 +28,9 @@ class RoomController {
     const rooms =  await Room.query()
                              .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
                              .where('id', params.id)
-                             .with('chats', (builder) => builder.with('user'))
+                             .with('sender')
+                             .with('receiver')
+                             .with('chats', (builder) => builder.orderBy('created_at', 'ASC').with('user'))
                              .fetch()
 
     if(rooms.rows.length === 0) {
