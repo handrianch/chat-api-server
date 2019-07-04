@@ -1,12 +1,10 @@
 'use strict'
 
 const Room = use('App/Models/Room')
-const { ModelNotFoundException } = require('@adonisjs/generic-exceptions')
 
 class RoomController {
-
   async index ({ request, response, auth }) {
-    const user = await auth.getUser()
+    const user  = await auth.getUser()
     const rooms = await Room.query()
                       .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
                       .with('sender')
@@ -20,11 +18,8 @@ class RoomController {
     return response.status(200).send(rooms);
   }
 
-  async store ({ request, response }) {
-  }
-
   async show ({ params, request, response, auth }) {
-    const user = await auth.getUser()
+    const user  = await auth.getUser()
     const rooms =  await Room.query()
                              .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
                              .where('id', params.id)
@@ -42,10 +37,17 @@ class RoomController {
     return response.status(200).send(rooms)
   }
 
-  async update ({ params, request, response }) {
-  }
+  async store ({request, response, auth, params}) {
+    const user = await auth.getUser()
+    const {receiver_id} = request.post('receiver_id')
+    let room = await Room.query().where('sender_id', user.id).where('receiver_id', receiver_id).fetch()
 
-  async destroy ({ params, request, response }) {
+    if(room.rows.length === 0) {
+      room = await Room.create({sender_id: user.id, receiver_id: receiver_id})
+      console.log(room.id)
+    }
+
+    return response.status(201).send(room)
   }
 }
 

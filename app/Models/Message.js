@@ -5,6 +5,10 @@ const Model = use('Model')
 const uuid = use('uuid')
 
 class Message extends Model {
+  static get incrementing () {
+    return false
+  }
+
   static boot() {
     super.boot()
 

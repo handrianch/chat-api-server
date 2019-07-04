@@ -12,6 +12,10 @@ class User extends Model {
     return ['password']
   }
 
+  static get incrementing () {
+    return false
+  }
+
   static boot () {
     super.boot()
 

@@ -19,7 +19,9 @@ const Route = use('Route')
 Route.post('/auth', 'AuthController.auth')
 
 Route.group(() => {
-  Route.get('/profile', 'UserController.profile')
   Route.resource('/rooms', 'RoomController').apiOnly()
+  Route.get('/profile', 'UserController.profile')
+  Route.get('/contacts', 'ContactController.index')
   Route.post('/messages', 'MessageController.store')
+  Route.delete('/messages/:id', 'MessageController.destroy')
 }).prefix('api/v1').middleware('auth')

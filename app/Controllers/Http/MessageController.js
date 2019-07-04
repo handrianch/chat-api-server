@@ -30,15 +30,19 @@ class MessageController {
     return await Message.query().where('room_id', params.room_id).fetch()
   }
 
+  async destroy ({ params, request, response, auth }) {
+    const user = await auth.getUser()
+    const messageDeleted = await Message.query().where({ user_id: user.id, id: params.id }).delete()
 
-  async edit ({ params, request, response, view }) {
-  }
+    let status = 200
+    let message = 'success'
 
+    if(!messageDeleted) {
+      status = 404
+      message = 'Not found'
+    }
 
-  async update ({ params, request, response }) {
-  }
-
-  async destroy ({ params, request, response }) {
+    return response.status(status).send({message})
   }
 }
 
