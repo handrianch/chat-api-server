@@ -6,14 +6,14 @@ class RoomController {
   async index ({ request, response, auth }) {
     const user  = await auth.getUser()
     const rooms = await Room.query()
-                      .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
-                      .with('sender')
-                      .with('receiver')
-                      .with('chats', (builder) => {
-                        return builder.orderBy('created_at', 'DESC').limit(1)
-                      })
-                      .limit(1)
-                      .fetch()
+                            .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
+                            .with('sender')
+                            .with('receiver')
+                            .with('chats', (builder) => {
+                              return builder.orderBy('created_at', 'DESC').limit(1)
+                            })
+                            .limit(1)
+                            .fetch()
 
     return response.status(200).send(rooms);
   }
