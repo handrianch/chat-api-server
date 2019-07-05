@@ -18,25 +18,6 @@ class RoomController {
     return response.status(200).send(rooms);
   }
 
-  async show ({ params, request, response, auth }) {
-    const user  = await auth.getUser()
-    const rooms =  await Room.query()
-                             .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
-                             .where('id', params.id)
-                             .with('sender')
-                             .with('receiver')
-                             .with('chats', (builder) => builder.orderBy('created_at', 'ASC').with('user'))
-                             .fetch()
-
-    if(rooms.rows.length === 0) {
-      return response.status(404).send({
-        message: `Room with id ${params.id} not found`
-      })
-    }
-
-    return response.status(200).send(rooms)
-  }
-
   async store ({request, response, auth, params}) {
     const user = await auth.getUser()
     const {receiver_id} = request.post('receiver_id')
@@ -48,6 +29,34 @@ class RoomController {
     }
 
     return response.status(201).send(room)
+  }
+
+  async show ({ params, request, response, auth }) {
+    const user  = await auth.getUser()
+    const {page}  = request.get('page')
+    const start   =  parseInt(page) ? parseInt(page) : 1
+    const limit   = 5
+    const rooms =  await Room.query()
+                             .whereRaw('sender_id = :id OR receiver_id = :id', {id: user.id})
+                             .where('id', params.id)
+                             .with('sender')
+                             .with('receiver')
+                             .with('chats', (builder) => {
+                                builder.orderBy('created_at', 'ASC').with('user').paginate(start, limit)
+                              })
+                             .fetch()
+
+    if(rooms.rows.length === 0) {
+      return response.status(404).send({
+        message: `Room with id ${params.id} not found`
+      })
+    }
+
+    return response.status(200).send(rooms)
+  }
+
+  async destroy ({request, response, params}) {
+
   }
 }
 
