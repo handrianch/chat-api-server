@@ -6,9 +6,9 @@ const Schema = use('Schema')
 class RoomSchema extends Schema {
   up () {
     this.create('rooms', (table) => {
-      table.uuid('id').primary()
-      table.uuid('sender_id').references('id').inTable('users')
-      table.uuid('receiver_id').references('id').inTable('users')
+      table.increments('id', 3)
+      table.string('name', 20)
+      table.enu('type', ['group', 'private'])
       table.timestamps()
     })
   }

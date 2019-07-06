@@ -30,14 +30,17 @@ class ExceptionHandler extends BaseExceptionHandler {
       message = 'Route Not Found'
       status = 404
     } else if(error.name == 'PasswordMisMatchException') {
-      message = 'Invalid password'
-      status = 400
-    } else if(error.name == 'UserNotFoundException') {
-      message = 'Username not found'
-      status = 400
-    } else if(error.name == 'InvalidJwtToken') {
-      message = 'authorization failed'
+      message = 'Invalid Password'
       status = 403
+    } else if(error.name == 'UserNotFoundException') {
+      message = 'Username Not found'
+      status = 404
+    } else if(error.name == 'InvalidJwtToken') {
+      message = 'Authorization Failed'
+      status = 403
+    } else if(error.name == 'Error') {
+      message = 'Internal Server Error'
+      status = 500
     }
 
     return response.status(status).send({message})

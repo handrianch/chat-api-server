@@ -18,10 +18,20 @@ const Route = use('Route')
 
 Route.post('/auth', 'AuthController.auth')
 
-Route.group(() => {
+/*Route.group(() => {
   Route.resource('/rooms', 'RoomController').apiOnly().except(['update'])
   Route.resource('/messages', 'MessageController').apiOnly().only(['store', 'destroy'])
   Route.get('/messages/room/:id', 'MessageController.show')
   Route.get('/profile', 'UserController.profile')
   Route.get('/contacts', 'ContactController.index')
-}).prefix('api/v1').middleware('auth')
+}).prefix('api/v1').middleware('auth').namespace('v1')*/
+
+Route.group(() => {
+  Route.get('/profile', 'UserController.profile') // [ok]
+  Route.get('/rooms', 'UserRoomController.index') // [ok]
+  Route.get('/rooms/:id/chats', 'UserRoomController.showChats') // [not]
+  Route.get('/rooms/:id/members', 'UserRoomController.showMembers') // [ok]
+  // Route.resource('/rooms', 'UserRoomController').apiOnly()
+  // Route.resource('/messages', 'MessageController').apiOnly()
+  // Route.get('/rooms/:id/members', 'UserRoomController.showMembers')
+}).prefix('api/v2').middleware('auth').namespace('v2')
