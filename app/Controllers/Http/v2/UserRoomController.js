@@ -31,6 +31,7 @@ class UserRoomController {
                                   .innerJoin('users', 'user_room.user_id', 'users.id')
                                   .where('user_room.room_id', roomId)
                                   .orderBy('chats.created_at', 'ASC')
+                                  .paginate(page, limit)
     return response.status(200)
                    .send(results)
   }
