@@ -42,6 +42,10 @@ class User extends Model {
   rooms () {
     return this.belongsToMany('App/Models/v2/Room').pivotModel('App/Models/v2/UserRoom')
   }
+
+  userRooms () {
+    return this.hasMany('App/Models/v2/UserRoom')
+  }
 }
 
 module.exports = User

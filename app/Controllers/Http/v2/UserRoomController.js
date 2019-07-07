@@ -1,35 +1,44 @@
 'use strict'
 
-const Room = use('App/Models/v2/Room')
-const User = use('App/Models/v2/User')
+const Env = use('Env')
 const Chat = use('App/Models/v2/Chat')
 const UserRoom = use('App/Models/v2/UserRoom')
+const Database = use('Database')
 
 class UserRoomController {
   async index ({request, response, auth}) {
     const user = await auth.getUser()
-    const results = await user.rooms().fetch()
-    response.status(200).send(results)
-  }
+    const page = request.get('page').page || 1
+    const limit = Env.get('PAGE_LIMIT')
+    const results = await user.rooms().paginate(page, limit)
 
-  async show ({request, response, auth, params}) {
-    const user = await auth.getUser()
-    const results = Chat.query().fetch()
     return response.status(200).send(results)
   }
 
   async showChats ({request, response, auth, params}) {
     const user = await auth.getUser()
-    // const results = await Chat.query().with('userRoom').where('user_room_id', params.id).fetch()
-    const results = await Room.query().where('id', params.id).with('userRoom').fetch()
-    // const results = await Chat.query().fetch()
+    const page = request.get('page').page || 1
+    const limit = Env.get('PAGE_LIMIT')
 
-    return response.status(200).send(results)
+    /*
+      SELECT chats.*, users.username, users.name FROM chats INNER JOIN user_room ON chats.user_room_id = user_room.id INNER JOIN users ON user_room.user_id = users.id WHERE user_room.room_id = 1 ORDER BY chats.created_at ASC;
+    */
+
+    // const results = Database.select('chats.*, users.username, users.name')
+    //                         .from('chats')
+    //                         .innerJoin('user_room', 'chats.user_room_id', 'user_room.id')
+    //                         .innerJoin('users', 'user_room.user_id', 'users.id')
+    //                         .where('user_room.room_id', 1)
+    //                         .orderBy('chats.created_at', 'ASC')
+    // console.log(results)
+    const results = await Database.raw("SELECT chats.*, users.username, users.name FROM chats INNER JOIN user_room ON chats.user_room_id = user_room.id INNER JOIN users ON user_room.user_id = users.id WHERE user_room.room_id = ? ORDER BY chats.created_at ASC", params.id)
+    return response.status(200)
+                   .send(results.toJson())
   }
 
   async showMembers ({request, response, params, auth}) {
     const user = await auth.getUser()
-    const results = await user.rooms().with('users').fetch()
+    const results = await user.rooms().where('rooms.id', params.id).with('users').paginate(1, 5)
 
     return response.status(200).send(results)
   }

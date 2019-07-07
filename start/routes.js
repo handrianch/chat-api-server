@@ -29,9 +29,6 @@ Route.post('/auth', 'AuthController.auth')
 Route.group(() => {
   Route.get('/profile', 'UserController.profile') // [ok]
   Route.get('/rooms', 'UserRoomController.index') // [ok]
-  Route.get('/rooms/:id/chats', 'UserRoomController.showChats') // [not]
+  Route.get('/rooms/:id/chats', 'UserRoomController.showChats') // [ok]
   Route.get('/rooms/:id/members', 'UserRoomController.showMembers') // [ok]
-  // Route.resource('/rooms', 'UserRoomController').apiOnly()
-  // Route.resource('/messages', 'MessageController').apiOnly()
-  // Route.get('/rooms/:id/members', 'UserRoomController.showMembers')
 }).prefix('api/v2').middleware('auth').namespace('v2')
